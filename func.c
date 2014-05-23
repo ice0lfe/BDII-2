@@ -4,43 +4,105 @@ Compilado com gcc version 4.6.3
 
 */
 #include "func.h"
+#define CONST1 30
+#define OBJ_TAM 94
+#define CAMPOS_TAM 49
+#define TAM_NOME 40
 
-struct CAMPOS *leMetadados(char *meta){ // Retorna os metadados em uma estrutura.
+
+struct CAMPOS *leTabela(char *fs_tabela, char *Table_name, char *fs_coluna){ // Retorna os metadados em uma estrutura.
 	FILE *metadados;
-	metadados = fopen(meta, "r"); // Abre os metadados armazenados em meta
+	FILE *tabela;
+	tabela = fopen( fs_tabela, "r");
+	
+	
+	//CAMPOS *campos = NULL;
+	
+	struct OBJ table;
+	
+	
+	//char *getTable = (OBJ *)malloc(sizeof(char)*OBJ_TAM;
+	int counter,counter1 = 0;
+	char endloop;
 	int qtdCampos, i, j = 0, tam;
 	char c;
+	
+	do {
+		fread(&table.id, sizeof(int), 1, tabela);
+		fread(table.lnome,sizeof(char), CONST1, tabela);
+		fread(table.fnome,sizeof(char), CONST1, tabela);
+		fread(table.dir,sizeof(char), CONST1, tabela);
+	}while(strcmp(table.lnome,Table_name)!=0 && (endloop = fgetc(tabela) != EOF));
+	if(strcmp(table.lnome, Table_name));
+		//return TABLE_NOT_FOUND;
+		
+	/*int foo;
+	printf("id: %d \n", table.id);
+	puts(table.lnome);
+	puts(table.fnome);
+	puts(table.dir);*/
+	
+	fclose(tabela);
+	
+	qtdCampos = qtCampos(fs_coluna, table.id);// printf("qt : %d",qtdCampos);
+	
+	metadados = fopen(fs_coluna, "r"); // Abre os metadados armazenados em meta
 
 	if (metadados == NULL)
        exit(0);
-    if(fread(&qtdCampos, sizeof(int), 1, metadados)) // Lê o primeiro inteiro que representa a quantidade de campos da tabela.
+    if(qtdCampos) // Lê o primeiro inteiro que representa a quantidade de campos da tabela.
     {
+	   int t;
+	   
 	   struct CAMPOS *campos=(struct CAMPOS *)malloc(sizeof(struct CAMPOS)*qtdCampos); // Cria uma estrutura para armazenar os dados dos campos.
 	   for( i = 0; i < qtdCampos ; i ++) // Laço para ler o nome, tipo e tamanho de cada campo.
 	   {
-		   fread(&c, 1,1,metadados);
+		   campos[i].id = table.id;
+		   fread(&t, sizeof(int),1,metadados);
+		   fread(&c, sizeof(char),1,metadados);
 			while (c != '\0') // Laço para ler o nome do campo.
 			{
 				campos[i].nome[j] = c;
-				fread(&c, 1,1,metadados);
+				fread(&c, sizeof(char),1,metadados);
 				j++;
 			}
+			fseek(metadados, TAM_NOME - j -1, SEEK_CUR);
 			fread(&c, 1, 1, metadados); // Lê o tipo do campo.
 			campos[i].tipo = c;
 			fread(&tam , sizeof(int), 1, metadados); // Lê o tamanho do campo.
 			campos[i].tamanho = tam;
 			j = 0;
+			//fseek(metadados,0,SEEK_END);
+			//long pos = ftell(metadados); //pega o tamanho do arquivo
+			
+			//printf("t : %d e %d", pos,qtdCampos);
 
 	   }
 	   fclose(metadados);// Fecha o arquivo meta
+	   
+	  /* printf("\nid: %d \n", campos[0].id);
+		puts(campos[0].nome);
+		printf("TIPO  %c\n", campos[0].tipo);
+		printf("TAAMM: %d\n", campos[0].tamanho);
+		
+		
+	   printf("\nid: %d \n", campos[1].id);
+		puts(campos[1].nome);
+		printf("TIPO  %c\n", campos[1].tipo);
+		printf("TAAMM: %d\n", campos[1].tamanho);
+		
+		printf("\nid: %d \n", campos[2].id);
+		puts(campos[2].nome);
+		printf("TIPO  %c\n", campos[2].tipo);
+		printf("TAAMM: %d\n", campos[2].tamanho);*/
 	   return campos;
     }
 
 	return NULL;
 }
-int tamTupla(struct CAMPOS *campos, char *meta){// Retorna o tamanho total da tupla da tabela.
+int tamTupla(struct CAMPOS *campos, char *meta, int id){// Retorna o tamanho total da tupla da tabela.
 
-    int qtdCampos = qtCampos(meta), i, tamanhoGeral = 0;
+    int qtdCampos = qtCampos(meta, id), i, tamanhoGeral = 0;
 
     if(qtdCampos){ // Lê o primeiro inteiro que representa a quantidade de campos da tabela.
 		for(i = 0; i < qtdCampos; i++)
@@ -49,20 +111,47 @@ int tamTupla(struct CAMPOS *campos, char *meta){// Retorna o tamanho total da tu
 
 	return tamanhoGeral;
 }
-int qtCampos(char *meta){ // Retorna a quantidade de campos do esquema
-    FILE *metadados;
-    int qtdCampos;
+int qtCampos(char *meta, int id){ // Retorna a quantidade de campos do esquema
+    FILE *fs_coluna = NULL;
+    int qtdCampos = 0;
+    int pula = 0;
+    int counter1 = 0;
+    char endloop;
+   // struct CAMPOS g;
+    
+    //printf("sizeof %d", sizeof(int));
+    fs_coluna = fopen(meta, "r");
 
-    metadados = fopen(meta, "r");
-
-    if (metadados == NULL)
+    if (fs_coluna == NULL)
         exit(0);
-    fread(&qtdCampos, sizeof(int), 1, metadados); //Lê o primeiro inteiro que representa a quantidade de campos da tabela.
-    fclose(metadados);
+    
+    fseek(fs_coluna,0,SEEK_END);
+	long pos = ftell(fs_coluna); //pega o tamanho do arquivo
+	rewind(fs_coluna);
+		
+     
+     counter1 = id;
+     int condicao = 1;
+     while(condicao && pula < pos){
+			fread(&counter1, sizeof(int),1,fs_coluna);
+			//pula = pula + sizeof(int);
+			if(counter1 != id){
+				condicao = 0;
+				break;
+			}
+			//pula++;
+			fseek(fs_coluna,CAMPOS_TAM - sizeof(int),SEEK_CUR); 
+			qtdCampos++;
+			pula += CAMPOS_TAM;
+	 }
+	   
+        
+   // fread(&qtdCampos, sizeof(int), 1, metadados); //Lê o primeiro inteiro que representa a quantidade de campos da tabela.
+    fclose(fs_coluna);
 
     return qtdCampos;
 }
-void leTupla(struct CAMPOS *campos, char *meta, char *linha){ //Lê uma tupla da memória
+void leTupla(struct CAMPOS *campos, char *fs_coluna, char *linha, int id){ //Lê uma tupla da memória
 
     char *auxStr; //Variável auxiliar para leitura de stringd
 
@@ -70,7 +159,7 @@ void leTupla(struct CAMPOS *campos, char *meta, char *linha){ //Lê uma tupla da
         return;
 
     int qtdCampos, j, k=0 ; // k é a posição do byte dentro da tupla
-    qtdCampos = qtCampos(meta);
+    qtdCampos = qtCampos(fs_coluna, id);
 
     for(j=0 ; j<qtdCampos; j++){
         if(j!=0)
@@ -93,8 +182,8 @@ void leTupla(struct CAMPOS *campos, char *meta, char *linha){ //Lê uma tupla da
 
 }
 char *getTupla(struct CAMPOS *campos, char *meta, char *dado, int from){ //Pega uma tupla do disco a partir do valor de from
-
-    int tamTpl = tamTupla(campos, meta);
+	int id;
+    int tamTpl = tamTupla(campos, meta,id);
     char *linha=(char *)malloc(sizeof(char)*tamTpl);
     FILE *dados;
 
@@ -140,14 +229,14 @@ void setTupla(struct page *buffer,char *tupla, int tam, int pos){ //Coloca uma t
 
 }
 void colocaTuplaBuffer(struct page *buffer, char *tupla, struct CAMPOS *campos, char *meta){//Define a página que será incluida uma nova tupla
-
+	int id;
     int i=0, found=0;
 	while (!found && i < BP)//Procura pagina com espaço para a tupla.
 	{
-    	if(SIZE - buffer[i].position > tamTupla(campos, meta)){// Se na pagina i do buffer tiver espaço para a tupla, coloca tupla.
-            setTupla(buffer, tupla, tamTupla(campos, meta), i);
+    	if(SIZE - buffer[i].position > tamTupla(campos, meta,id)){// Se na pagina i do buffer tiver espaço para a tupla, coloca tupla.
+            setTupla(buffer, tupla, tamTupla(campos, meta,id), i);
             found = 1;
-            buffer[i].position += tamTupla(campos,meta); // Atualiza proxima posição vaga dentro da pagina.
+            buffer[i].position += tamTupla(campos,meta,id); // Atualiza proxima posição vaga dentro da pagina.
             buffer[i].nrec += 1;
             break;
     	}
@@ -161,9 +250,9 @@ void colocaTuplaBuffer(struct page *buffer, char *tupla, struct CAMPOS *campos, 
     }
     */
 }
-void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int pg, int rg){
+void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int pg, int rg, int id){
 //mostra o registro de número "rg" da página "pg" do bufffer
-    int k, i, tam = tamTupla(campos,meta), qt=qtCampos(meta);
+    int k, i, tam = tamTupla(campos,meta,id), qt=qtCampos(meta,id);
     char *linha = NULL;
 
     if(buffer[pg].position != 0){
@@ -173,7 +262,7 @@ void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int
         for(k = 0; k < buffer[pg].nrec; k ++){
             if(k == rg){
                 linha = strcop(buffer[pg].data, k, tam); //Função que devolve uma string para a impressão da tupla
-                leTupla(campos, meta, linha); //Mostra a string
+                leTupla(campos, meta, linha,id); //Mostra a string
                 return;
             }
         }
@@ -181,16 +270,16 @@ void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int
     }
 
 }
-void showBuffer(struct page *buffer, struct CAMPOS *campos, char *meta){
+void showBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int id){
 //Mostra todas as páginas do buffer que contenham registros
-    int i, k, tam = tamTupla(campos,meta);
+    int i, k, tam = tamTupla(campos,meta,id);
     char *linha = NULL;
     for(i = 0; i < BP; i++){
         if(buffer[i].position != 0){
             printf("Página %d:\n", i);
             for(k = 0; k < buffer[i].nrec; k ++){
                 linha = strcop(buffer[i].data, k, tam);
-                leTupla(campos, meta, linha);
+                leTupla(campos, meta, linha,id);
             }
         }
     }
@@ -206,7 +295,8 @@ char *strcop(char *data, int pos, int tam){//Copia registro do buffer
 }
 void carregaDados(struct page *buffer, char *data, char *meta, struct CAMPOS *campos){
 //Traz todos os registros para o buffer
-    int i=1, tamTpl = tamTupla(campos, meta);  //tamTpl representa o tamanho total dos atributos
+	int id = 1;
+    int i=1, tamTpl = tamTupla(campos, meta, id);  //tamTpl representa o tamanho total dos atributos
     char *linha = getTupla(campos, meta, data, 0);
 
     while(linha != NULL){ //Pega as tuplas e insere no buffer até que acabe o arquivo
