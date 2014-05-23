@@ -1,3 +1,6 @@
+BDII-2
+======
+
 Eu criei um exemplo de tabela :
 
 	no arquivo fs_tabela.dat esta organizado deste modo:
@@ -13,7 +16,7 @@ Eu criei um exemplo de tabela :
 	-----------------------------------------
 	 1 |       nome       |   S     | 20
 	 1 |       ender      |   S     | 30
-         1 |       idade      |   I     |  4
+     1 |       idade      |   I     |  4
 
 	e o arquivo 000001.dat :
 
