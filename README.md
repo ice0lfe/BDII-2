@@ -25,3 +25,14 @@ Eu criei um exemplo de tabela :
 	Iron  | R. Oito| 450
 	Steel | R. Nove| 670 
 	Silver| R. Dez | 552
+
+
+	Por enquanto o programa lê o fs_tabela.dat e o fs_coluna.dat
+
+	para executar usa 
+
+	./(NOME ARQUIVO) [CAMINHO DE fs_tabela.dat] [NOME TABELA] [CAMINHO
+	de fs_coluna.dat];
+
+	NOME TABELA : tabela a ser aberta, neste caso só tem a tabela cliente
+	nos arquivos
