@@ -7,7 +7,7 @@ Eu criei um exemplo de tabela :
 
 	id | nome Lógico | nome físico | diretório
 	-------------------------------------------
-	1  |  ciente     |  000001.dat | files/data
+	1  |  cliente     |  000001.dat | files/data
 
 
 	no arquivo fs_coluna.dat esta organizado assim :
@@ -27,7 +27,12 @@ Eu criei um exemplo de tabela :
 	Silver| R. Dez | 552
 
 
-	Por enquanto o programa lê o fs_tabela.dat e o fs_coluna.dat
+	O programa lê o fs_tabela.dat e o fs_coluna.dat e 000001.dat
+	coloca no buffer e imprime.
+
+	Acredito que as funcionalidades básicas já estão ok.
+
+	Falta ainda fazer tratamento de erros.
 
 	para executar usa 
 
