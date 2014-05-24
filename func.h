@@ -42,17 +42,18 @@ struct OBJ {
 };
 
 
-struct CAMPOS *leTabela(char *fs_tabela,char *Table_name, char *fs_coluna); //Identifica a estrutura de metadados 
-int tamTupla(struct CAMPOS *campos, char *meta, int id); //tamanho de uma tupla (tamanho dos atributos somados)
-void leTupla(struct CAMPOS *campos, char *fs_coluna, char *linha, int id);//impressão na tela 
-int qtCampos(char *fs_coluna, int id); //Quantidade campos de uma tablea
-char *getTupla(struct CAMPOS *campos, char *meta, char *dado, int from); //Carrega uma tupla  do arquivo de dados em forma de string 
-void carregaDados(struct page *buffer, char *data,char *meta, struct CAMPOS *campos); //Função principal entre CARREGAR TUPLA E COLOCAR NO BUFFER
+struct OBJ *leTabela(char *fs_tabela, char *Table_name, char *fs_coluna); //Identifica a estrutura da tabela
+struct CAMPOS *leMetaDados(char *fs_coluna, int id); //Identifica a estrutura do metadados 
+int tamTupla(struct CAMPOS *campos, char *meta); //tamanho de uma tupla (tamanho dos atributos somados)
+void leTupla(struct CAMPOS *campos, char *fs_coluna, char *linha);//impressão na tela 
+int qtCampos(char *meta, int id); //Quantidade campos de uma tablea
+char *getTupla(struct CAMPOS *campos, char *meta, struct OBJ *tabela, int from); //Carrega uma tupla  do arquivo de dados em forma de string 
+void carregaDados(struct page *buffer, char *meta, struct CAMPOS *campos, struct OBJ *tabela); //Função principal entre CARREGAR TUPLA E COLOCAR NO BUFFER
 struct page *inicializaBuffer(); //Valores default para cada pagina
 void setTupla(struct page *buffer,char *tupla, int tam, int pos); //Função complementar de colocaTuplaBuffer
 void colocaTuplaBuffer(struct page *buffer, char *tupla, struct CAMPOS *campos, char *meta); //Controle do buffer e páginas
 char *strcop(char *data, int k, int tam); //Copia uma tupla do buffer para a impressao na tela
-void showBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int id); //Funções de IMPRESSÃO
-void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int pg, int rg, int id);
+void showBuffer(struct page *buffer, struct CAMPOS *campos, char *meta); //Funções de IMPRESSÃO
+void showTupleBuffer(struct page *buffer, struct CAMPOS *campos, char *meta, int pg, int rg);
 
 
