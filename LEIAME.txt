@@ -48,3 +48,5 @@ Para compilação digite no terminal:
 $ gcc *.c -o prog -Wall
 $ ./prog <metadados> <dados>
 
+$ gcc *.c -o prog -Wall
+$ ./prog <fs_tabela> <nome_tabela> <fs_coluna>
